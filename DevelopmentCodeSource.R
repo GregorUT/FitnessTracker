@@ -1,62 +1,58 @@
-## Project Folder Creation
+## Run_Analysis 
 
-mkdirs <- function(fp) {
-       if(!file.exists(fp)) {
-           mkdirs(dirname(fp))
-           dir.create(fp)
-       }
-   }
+####################################
+## Data Folder Configuration      ##
+####################################
 
-## The Project Files will go in PrjLocalHome
-PrjLocalHome <- "C:/Project"
+Source("DataFolderConfiguration.R")
 
-## The DataFiles will go in PrjDataLocalDir
-PrjDataLocalDir <- paste(PrjLocalHome,"/Data",sep="")
+PrjLocalBase<- "C:/Project"
 
-## Create Directories on the local system
-mkdirs(PrjDataLocalDir)
+## If you already have the files downloaded, comment out the call to DataFolderConfiguration
 
-## Name of the Local Zip file
-PrjDataLocalFile <- paste(PrjLocalHome,"/data.zip",sep="")
+DataFolderConfiguration(LocalFileBase)
 
-
-## Project Data Files Download
-
-PrjDataSourceURL <-"https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
-
-download.file(PrjDataSourceURL, PrjDataLocalFile)
-
-## unzip the contents of the data.zip file to PjrDataLocalDir
-unzip(zipfile = PrjDataLocalFile, exdir = PrjDataLocalDir)
+PrjDataLocalDir <- paste(PrjLocalBase,"/Data",sep="")
 
 ## Base folder of the Downloaded Dataset
 UCIDatasetDir <- paste(PrjDataLocalDir,"/UCI HAR Dataset",sep = "")
+
+## Uncomment the following ling and enter the path to the location of the unzipped following,
+#UCIDatasetDir <- "Location of unzipped Files"
+
+
+###################################
+## Script Initialization         ##
+###################################
 
 ## PUt the Directory structure into variables
 TestDataSetDir <- paste(UCIDatasetDir,"/Test",sep = "")
 TrainDataSetDir <- paste(UCIDatasetDir,"/Train",sep = "")
 
 ## put the File structure into variables
-FileFeaturesTable <- paste(UCIDatasetDir,"/Features.TXT",sep = "")
+FileColVariableNamesTable <- paste(UCIDatasetDir,"/Features.TXT",sep = "")
 FileActivityTable <- paste(UCIDatasetDir,"/activity_labels.TXT",sep = "")
-FileTrainXTrain <- paste(TrainDataSetDir,"/X_Train.txt",sep = "")
-FileTestXTest <- paste(TestDataSetDir,"/X_Test.txt",sep = "")
-FileTrainLabel <- paste(TrainDataSetDir,"/Y_Train.txt",sep = "")
-FileTestLabel <- paste(TestDataSetDir,"/Y_Test.txt",sep = "")
+FilePrimaryTrainData <- paste(TrainDataSetDir,"/X_Train.txt",sep = "")
+FilePrimaryTestData <- paste(TestDataSetDir,"/X_Test.txt",sep = "")
+FileTrainActivityID <- paste(TrainDataSetDir,"/Y_Train.txt",sep = "")
+FileTestActivityID <- paste(TestDataSetDir,"/Y_Test.txt",sep = "")
 
+##################################
+## Read Tables in               ##
+##################################
 ## Get the Variable Data
-tblFeatures <- read.table(FileFeaturesTable)
+tblDataColNames <- read.table(FileColVariableNamesTable)
 tblActivity <- read.table(FileActivityTable)
 
-## Get the Actual Data
-TrainData <- read.table(FileTrainXTrain)
-TestData <- read.table(FileTestXTest)
+tblTrainActivityID <- read.table(FileTrainActivityID)
+tblTestActivityID <- read.table(FileTestActivityID)
 
-LabelTrain <- read.table(FileTrainLabel)
-LabelTest <- read.table(FileTestLabel)
+## Get the Actual Data
+TrainData <- read.table(FilePrimaryTrainData)
+TestData <- read.table(FilePrimaryTestData)
 
 ## prepair the tabels for the columns
-DataColNames <- tblFeatures[,2]
+DataColNames <- tblDataColNames[,2]
 
 colnames(TrainData) <- DataColNames
 colnames(TestData) <- DataColNames
@@ -64,11 +60,11 @@ colnames(TestData) <- DataColNames
 colnames(tblActivity)[1] <- c("ActivityID")
 
 ## Add then name the labels to the table
-# colnames(LabelTrain) <- c("ActivityID")
-# colnames(LabelTest) <- c("ActivityID")
+# colnames(tblTrainActivityID) <- c("ActivityID")
+# colnames(tblTestActivityID) <- c("ActivityID")
 
-TrainWithActivity <- cbind(TrainData,LabelTrain)
-TestWithActivity <- cbind(TestData,LabelTest)
+TrainWithActivity <- cbind(TrainData,tblTrainActivityID)
+TestWithActivity <- cbind(TestData,tblTestActivityID)
 
 colnames(TrainWithActivity)[562]<-c("ActivityID")
 colnames(TestWithActivity)[562]<-c("ActivityID")
@@ -78,12 +74,12 @@ TestWithActNames <- merge(x=TestWithActivity, y=tblActivity, by="ActivityID", al
 
 
 ## This version returns everything with mean or std and () in the name ** only one set should be used ** 
-#meanCols <- grep("mean()",tblFeatures$V2)
-#stdCols <- grep("std()",tblFeatures$V2)
+#meanCols <- grep("mean()",tblDataColNames$V2)
+#stdCols <- grep("std()",tblDataColNames$V2)
 
 ## This version returns only those with "mean()" and "std()" in the name ** only one set should be used ** 
-meanCols <- grep("mean()",tblFeatures$V2, fixed = TRUE)
-stdCols <- grep("std()",tblFeatures$V2,fixed = TRUE)
+meanCols <- grep("mean()",tblDataColNames$V2, fixed = TRUE)
+stdCols <- grep("std()",tblDataColNames$V2,fixed = TRUE)
 
 
 
@@ -108,6 +104,3 @@ frmTestData <- TestWithActNames[,DesiredColsIndex]
 
 ## Process Primary DataTable - Combine then Name Columns
 FullSourceData <- rbind(TrainData, TestData)
-
-
-
