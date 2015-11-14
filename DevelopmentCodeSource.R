@@ -44,7 +44,7 @@ FileTestXTest <- paste(TestDataSetDir,"/X_Test.txt",sep = "")
 FileTrainLabel <- paste(TrainDataSetDir,"/Y_Train.txt",sep = "")
 FileTestLabel <- paste(TestDataSetDir,"/Y_Test.txt",sep = "")
 
-## Get the Table Data
+## Get the Variable Data
 tblFeatures <- read.table(FileFeaturesTable)
 tblActivity <- read.table(FileActivityTable)
 

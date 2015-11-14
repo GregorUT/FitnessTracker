@@ -25,11 +25,13 @@ PrjDataLocalFile <- paste(PrjLocalHome,"/data.zip",sep="")
 
 PrjDataSourceURL <-"https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
 
-download.file(PrjDataSourceURL, PrjDataLocalFile)
+if(!file.exists(PrjDataLocalFile))
+{
+    download.file(PrjDataSourceURL, PrjDataLocalFile)
 
 ## unzip the contents of the data.zip file to PjrDataLocalDir
-unzip(zipfile = PrjDataLocalFile, exdir = PrjDataLocalDir)
-
+    unzip(zipfile = PrjDataLocalFile, exdir = PrjDataLocalDir)
+}
 ## Base folder of the Downloaded Dataset
 UCIDatasetDir <- paste(PrjDataLocalDir,"/UCI HAR Dataset",sep = "")
 }
