@@ -51,7 +51,7 @@ tblTestActivityID <- read.table(FileTestActivityID)
 TrainData <- read.table(FilePrimaryTrainData)
 TestData <- read.table(FilePrimaryTestData)
 
-## prepair the tabels for the actvity columns
+## prepair the tabels for the Column Names
 DataColNames <- tblDataColNames[,2]
 
 colnames(TrainData) <- DataColNames
@@ -72,45 +72,31 @@ DesiredCols <- append(as.numeric(meanCols),as.numeric(stdCols))
 DesiredColsSorted <- sort(as.numeric(DesiredCols))
 
 ## Build the Frames
-frmTrainData <- TrainData[,DesiredColsSorted]
-frmTestData <- TestData[,DesiredColsSorted]
+DesiredTrainData <- TrainData[,DesiredColsSorted]
+DesiredTestData <- TestData[,DesiredColsSorted]
 
-
-## Process Primary DataTable - Combine then Name Columns
-FullSourceData <- rbind(frmTrainData, frmTestData)
-
-#############################################################
-## Frist set of tidy data                                  ##
-#############################################################
-
+## Add the ActivityID then Activity Name
 colnames(tblActivity)[1] <- c("ActivityID")
 
-## Add then name the labels to the table
-# colnames(tblTrainActivityID) <- c("ActivityID")
-# colnames(tblTestActivityID) <- c("ActivityID")
+TrainWithActivity <- cbind(DesiredTrainData,tblTrainActivityID)
+TestWithActivity <- cbind(DesiredTestData,tblTestActivityID)
 
-TrainWithActivity <- cbind(TrainData,tblTrainActivityID)
-TestWithActivity <- cbind(TestData,tblTestActivityID)
-
-colnames(TrainWithActivity)[562]<-c("ActivityID")
-colnames(TestWithActivity)[562]<-c("ActivityID")
+colnames(TrainWithActivity)[67]<-c("ActivityID")
+colnames(TestWithActivity)[67]<-c("ActivityID")
 
 TrainWithActNames <- merge(x=TrainWithActivity, y=tblActivity, by="ActivityID", all.x = TRUE)
 TestWithActNames <- merge(x=TestWithActivity, y=tblActivity, by="ActivityID", all.x = TRUE)
 
+colnames(TrainWithActNames)[68]<-c("Activity")
+colnames(TestWithActNames)[68]<-c("Activity")
+
+# Combine Train and Test Datasets
+TidyData <- rbind(TrainWithActNames, TestWithActNames)
 
 
-## The merge command is adding the Activity ID to the front of the table.  
-## Adding one to offset the additional column - This is a hack for now
-DesiredColsIndex <- DesiredColsSorted+1
-
-## Add activty Name 
-DesiredColsIndex <- c(DesiredColsIndex,563)
-
-
-## Desire Column Names - For Troubleshooting
-# DesiredColNames <- colnames(TrainWithActivity[,DesiredColsIndex])
-
+#############################################################
+## First set of tidy data                                  ##
+#############################################################
 
 
 
