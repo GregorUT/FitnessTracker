@@ -4,6 +4,7 @@
 ## Data Folder Configuration      ##
 ####################################
 
+library(dplyr)
 Source("DataFolderConfiguration.R")
 
 PrjLocalBase<- "C:/Project"
@@ -96,12 +97,12 @@ colnames(TestWithActNames)[68]<-c("Activity")
 
 # Combine Train and Test Datasets
 TidyData <- rbind(TrainWithActNames, TestWithActNames)
-write.table(TidyData, file = "ClassProject_Tidy.txt", row.names=FALSE)
+
+
 
 #############################################################
-## Add Subject ID to Tidy Data                             ##
+## Add Subject ID to Dataframe                             ##
 #############################################################
-
 FileSubjectIDTrain <- paste(TrainDataSetDir,"/Subject_Train.txt",sep = "")
 FileSubjectIDTest <- paste(TestDataSetDir,"/Subject_Test.txt",sep = "")
 
@@ -109,8 +110,32 @@ SubjectIDTrain <- as.vector(read.table(FileSubjectIDTrain))
 SubjectIDTest <- as.vector(read.table(FileSubjectIDTest))
 
 ## Add the test and train vectors into a single subject ID vector
-SubjectIDs <- c(SubjectIDTrain, SubjecIDTest)
+SubjectIDs <- rbind(SubjectIDTrain, SubjectIDTest)
 
 ## Connect the Subject ID vector to the Tidy Data
-TidyDataWithSubjects <- cbind(TidyData,SubjectIDs)
-colnames(TidyDataWithSubjects)[69] <- c("SubjectID")
+TidyDataComplete <- cbind(TidyData,SubjectIDs)
+colnames(TidyDataComplete)[69] <- c("SubjectID")
+
+
+############################################################
+## Tidy Data processing is complete                       ##
+############################################################
+
+write.table(TidyDataComplete, file = "ClassProject_Tidy.txt", row.names=FALSE)
+
+
+############################################################
+## Create second Tidy Dataset with summerization          ##
+############################################################
+
+
+ByActivity <- group_by(TidyDataComplete, Activity)
+# remove the Activity ID and the SubjectID, since they aren't needed
+MeanByActivity <- summarize_each(select(ByActivity, -c(ActivityID,SubjectID)), funs(mean))
+BySubject <- group_by(TidyDataComplete, SubjectID)
+# remove the Activity ID and the Activity, since they aren't needed
+MeanBysubject <- summarize_each(select(BySubject, -c(ActivityID,Activity)), funs(mean))
+
+write.table(MeanByActivity,file = "ClassProject_MeanByActivity.txt", row.name=FALSE)                                
+write.table(MeanBySubject,file = "ClassProject_MeanBySubject.txt", row.name=FALSE)                                  
+                                 
