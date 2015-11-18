@@ -90,15 +90,27 @@ TestWithActNames <- merge(x=TestWithActivity, y=tblActivity, by="ActivityID", al
 colnames(TrainWithActNames)[68]<-c("Activity")
 colnames(TestWithActNames)[68]<-c("Activity")
 
-# Combine Train and Test Datasets
-TidyData <- rbind(TrainWithActNames, TestWithActNames)
-
-
 #############################################################
 ## First set of tidy data                                  ##
 #############################################################
 
+# Combine Train and Test Datasets
+TidyData <- rbind(TrainWithActNames, TestWithActNames)
+write.table(TidyData, file = "ClassProject_Tidy.txt", row.names=FALSE)
 
+#############################################################
+## Add Subject ID to Tidy Data                             ##
+#############################################################
 
+FileSubjectIDTrain <- paste(TrainDataSetDir,"/Subject_Train.txt",sep = "")
+FileSubjectIDTest <- paste(TestDataSetDir,"/Subject_Test.txt",sep = "")
 
+SubjectIDTrain <- as.vector(read.table(FileSubjectIDTrain))
+SubjectIDTest <- as.vector(read.table(FileSubjectIDTest))
 
+## Add the test and train vectors into a single subject ID vector
+SubjectIDs <- c(SubjectIDTrain, SubjecIDTest)
+
+## Connect the Subject ID vector to the Tidy Data
+TidyDataWithSubjects <- cbind(TidyData,SubjectIDs)
+colnames(TidyDataWithSubjects)[69] <- c("SubjectID")
