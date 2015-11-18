@@ -5,7 +5,7 @@
 ####################################
 
 library(dplyr)
-Source("DataFolderConfiguration.R")
+source("DataFolderConfiguration.R")
 
 PrjLocalBase<- "C:/Project"
 
@@ -134,7 +134,7 @@ ByActivity <- group_by(TidyDataComplete, Activity)
 MeanByActivity <- summarize_each(select(ByActivity, -c(ActivityID,SubjectID)), funs(mean))
 BySubject <- group_by(TidyDataComplete, SubjectID)
 # remove the Activity ID and the Activity, since they aren't needed
-MeanBysubject <- summarize_each(select(BySubject, -c(ActivityID,Activity)), funs(mean))
+MeanBySubject <- summarize_each(select(BySubject, -c(ActivityID,Activity)), funs(mean))
 
 write.table(MeanByActivity,file = "ClassProject_MeanByActivity.txt", row.name=FALSE)                                
 write.table(MeanBySubject,file = "ClassProject_MeanBySubject.txt", row.name=FALSE)                                  
