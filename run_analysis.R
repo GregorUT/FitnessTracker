@@ -3,15 +3,20 @@
 ####################################
 ## Data Folder Configuration      ##
 ####################################
-
 library(dplyr)
+
 source("DataFolderConfiguration.R")
 
-PrjLocalBase<- "C:/Project"
+#PrjLocalBase<- "C:/Project"
+
+## Using local working directory for data.  
+PrjLocalBase<- getwd()
 
 ## If you already have the files downloaded, comment out the call to DataFolderConfiguration
+## The script expects the data to be in the subfolder structure "YourCurrentWorkingDirectory"\TidyData\Data\UCI HAR Dataset
+## if the data is not in the subfoldre structure make sure the DataFolderConfiguration.R script is in your working directory
 
-DataFolderConfiguration(LocalFileBase)
+DataFolderConfiguration(PrjLocalBase)
 
 PrjDataLocalDir <- paste(PrjLocalBase,"/Data",sep="")
 
@@ -137,5 +142,4 @@ BySubject <- group_by(TidyDataComplete, SubjectID)
 MeanBySubject <- summarize_each(select(BySubject, -c(ActivityID,Activity)), funs(mean))
 
 write.table(MeanByActivity,file = "ClassProject_MeanByActivity.txt", row.name=FALSE)                                
-write.table(MeanBySubject,file = "ClassProject_MeanBySubject.txt", row.name=FALSE)                                  
-                                 
+write.table(MeanBySubject,file = "ClassProject_MeanBySubject.txt", row.name=FALSE)  
