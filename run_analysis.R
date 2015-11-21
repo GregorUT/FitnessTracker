@@ -15,7 +15,6 @@ PrjLocalBase<- getwd()
 ## If you already have the files downloaded, comment out the call to DataFolderConfiguration
 ## The script expects the data to be in the subfolder structure "YourCurrentWorkingDirectory"\TidyData\Data\UCI HAR Dataset
 ## if the data is not in the subfoldre structure make sure the DataFolderConfiguration.R script is in your working directory
-
 DataFolderConfiguration(PrjLocalBase)
 
 PrjDataLocalDir <- paste(PrjLocalBase,"/Data",sep="")
@@ -96,14 +95,8 @@ TestWithActNames <- merge(x=TestWithActivity, y=tblActivity, by="ActivityID", al
 colnames(TrainWithActNames)[68]<-c("Activity")
 colnames(TestWithActNames)[68]<-c("Activity")
 
-#############################################################
-## First set of tidy data                                  ##
-#############################################################
-
 # Combine Train and Test Datasets
 TidyData <- rbind(TrainWithActNames, TestWithActNames)
-
-
 
 #############################################################
 ## Add Subject ID to Dataframe                             ##
